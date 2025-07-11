@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: TrapM;
+    src: url('../src/fonts/Trap-Medium.woff2');
+}
+
+@font-face {
+    font-family: TrapSB;
+    src: url('../src/fonts/Trap-SemiBold.woff2');
+}
+
+@font-face {
+    font-family: TrapR;
+    src: url('../src/fonts/Trap-Regular.woff2');
+}
+
+@font-face {
+    font-family: TrapB;
+    src: url('../src/fonts/Trap-Bold.woff2');
+}
+
+.TrapM {
+    font-family: TrapM;
+}
+
+.TrapSB {
+    font-family: TrapSB;
+}
+
+.TrapR {
+    font-family: TrapR;
+}
+
+.TrapB {
+    font-family: TrapB;
+}
+
+body {
+    background-color: #d4d4d4;
+}
+
+.bg-mesh-white {
+    background-color: #d4d4d4;
+}
+
+.bg-regular-white {
+    background-color: #f0f0f0;
+}
+
+.bg-mesh-black {
+    background-color: #272727;
+}
+
+.text-mesh-black {
+    color: #2c2c2c;
+}
+
+.text-mesh-white {
+    color: #d4d4d4;
+}
+
+
+.Hide-Status {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.Show-Status {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (min-width: 767px) {
+  .Hide-Status{
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
