@@ -60,7 +60,7 @@ const UserAuthForm = ({ type }) => {
                         icon={<BsKey className="text-[20px]" />}
                     />
 
-                    <div className="max-md:w-[300px] md:w-[450px] flex justify-center items-center mt-[27px]">
+                    <div className="max-md:w-[300px] md:w-[450px] flex justify-center items-center mt-[27px]"> 
 
                         {/* Button */}
 
@@ -95,7 +95,7 @@ const UserAuthForm = ({ type }) => {
 
                         {
                             type == 'sign-in' ?
-
+  
                                 <p className="TrapR mt-[15px] select-none cursor-pointer">
                                     <span className="text-mesh-black tracking-tight">Create new account ? </span>
                                     <Link to='/sign-up' className="underline TrapM text-[#245bd3]">Sign Up</Link>
