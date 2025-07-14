@@ -4,13 +4,85 @@ import { MdAlternateEmail } from "react-icons/md";
 import { BsKey } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom'
+import { useRef } from "react";
+import axios from 'axios'
+import { toast } from 'react-toastify';
+import { useState } from "react";
+import {storeDataInSession} from '../functions/Session'
 
 const UserAuthForm = ({ type }) => {
+
+    const [loadingBTNstatus, SetloadingBTNstatus] = useState(false)
+    const userAuthForm = useRef()
+
+    const SubmitSignUpFormHandler = async (e) => {
+        e.preventDefault();
+
+        let forms = new FormData(userAuthForm.current)
+        let storData = {}
+
+        for (let [key, value] of forms.entries()) {
+            storData[key] = value
+        }
+
+        try {
+            SetloadingBTNstatus(true)
+            const respSingUp = await axios.post(`${import.meta.env.VITE_BackendURL}/auth/sign-up`, storData, { withCredentials: true })
+
+            if (respSingUp.data.Success == false) {
+                SetloadingBTNstatus(false)
+                toast.error(respSingUp.data.Message)
+            }
+            else {
+                SetloadingBTNstatus(false)
+                toast.success(respSingUp.data.Message)
+            }
+        } catch (error) {
+            SetloadingBTNstatus(false)
+            console.log(error)
+        }
+    }
+
+
+
+    const SubmitSignINFormHandler = async (e) => {
+        e.preventDefault();
+
+        let forms = new FormData(userAuthForm.current)
+        let storDatain = {}
+
+        for (let [key, value] of forms.entries()) {
+            storDatain[key] = value
+        }
+
+
+        try {
+            SetloadingBTNstatus(true)
+            const respSingIp = await axios.post(`${import.meta.env.VITE_BackendURL}/auth/sign-in`, storDatain, { withCredentials: true })
+
+            if (respSingIp.data.Success == false) {
+                SetloadingBTNstatus(false)
+                toast.error(respSingIp.data.Message)
+            }
+            else {
+                SetloadingBTNstatus(false)
+                storeDataInSession("user", JSON.stringify(respSingIp.data.Data))
+                console.log(sessionStorage)
+                toast.success(respSingIp.data.Message)
+            }
+        } catch (error) {
+            SetloadingBTNstatus(false)
+            console.log(error)
+        }
+    }
+
+
+
     return (
         <>
             <div className="w-full h-fit flex flex-col">
 
-                <div className="w-full h-fit flex flex-col justify-center items-center mt-[50px]">
+                <form ref={userAuthForm} className="w-full h-fit flex flex-col justify-center items-center mt-[50px]">
 
                     <h2 className="TrapSB text-[1.7rem] leading-[1.7rem] tracking-tight text-mesh-black mb-[10px] ">
                         {type == 'sign-in' ?
@@ -60,19 +132,40 @@ const UserAuthForm = ({ type }) => {
                         icon={<BsKey className="text-[20px]" />}
                     />
 
-                    <div className="max-md:w-[300px] md:w-[450px] flex justify-center items-center mt-[27px]"> 
+                    <div className="max-md:w-[300px] md:w-[450px] flex justify-center items-center mt-[27px]">
 
                         {/* Button */}
 
                         {
-                            type == 'sign-up' ?
-                                <div className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[20px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer ">
-                                    Sign Up
-                                </div>
+                            loadingBTNstatus ?
+                                (
+                                    <>
+                                        <div className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[20px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer">
+                                            Loading ...
+                                        </div>
+                                    </>
+                                )
                                 :
-                                <div className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[20px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer">
-                                    Sign In
-                                </div>
+                                (
+                                    <>
+                                        {
+                                            type === 'sign-up' ?
+                                                (
+                                                    <div onClick={SubmitSignUpFormHandler} className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[20px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer ">
+                                                        Sign Up
+                                                    </div>
+                                                )
+                                                :
+                                                (
+                                                    <div onClick={SubmitSignINFormHandler} className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[20px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer">
+                                                        Sign In
+                                                    </div>
+                                                )
+                                        }
+                                    </>
+                                )
+
+
                         }
 
                     </div>
@@ -95,7 +188,7 @@ const UserAuthForm = ({ type }) => {
 
                         {
                             type == 'sign-in' ?
-  
+
                                 <p className="TrapR mt-[15px] select-none cursor-pointer">
                                     <span className="text-mesh-black tracking-tight">Create new account ? </span>
                                     <Link to='/sign-up' className="underline TrapM text-[#245bd3]">Sign Up</Link>
@@ -114,7 +207,7 @@ const UserAuthForm = ({ type }) => {
 
 
 
-                </div>
+                </form>
 
             </div>
         </>
