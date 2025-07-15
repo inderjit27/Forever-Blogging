@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Logo from '../data/logo.svg'
 import { FiSearch } from "react-icons/fi";
 import { LuFilePenLine } from "react-icons/lu";
 import { Link } from 'react-router-dom'
 import { Outlet } from 'react-router-dom';
+import { AppContext } from "../../AppContext";
+import { IoIosNotifications } from "react-icons/io";
+import { FaUser } from "react-icons/fa";
+import UserNavigationPannel from './UserNavigationPannel'
 
 const NavBarComponent = () => {
 
     const [SearchActiveStatus, SetSearchActiveStatus] = useState(false)
+    const { userAuthentication, SetUserAuthentication } = useContext(AppContext)
+
+    const [ProfileStatusActivate, SetProfileStatusActivate] = useState(false)
+
 
     return (
         <>
@@ -40,8 +48,8 @@ const NavBarComponent = () => {
 
                     {/* Menu-Search-Icon for Active ----------------------------------------------------------- */}
                     <div onClick={() => SetSearchActiveStatus((current) => !current)}
-                        className='w-[40px] h-[40px] bg-regular-white flex justify-center items-center rounded-full ml-auto select-none cursor-pointer md:hidden'>
-                        <FiSearch className='text-[22px] text-mesh-black' />
+                        className='w-[40px] h-[40px] bg-[#f0f0f0] text-[#272727] hover:bg-[#272727] hover:text-[#f0f0f0] flex justify-center items-center rounded-full ml-auto select-none cursor-pointer md:hidden'>
+                        <FiSearch className='text-[22px]' />
                     </div>
 
 
@@ -53,24 +61,74 @@ const NavBarComponent = () => {
                         </div>
                     </Link>
 
-                    {/* Sign In BTN  ----------------------------------------------------------------------------*/}
-                    <Link to='/sign-in'>
-                        <div className='h-[40px] w-fit px-[20px] flex justify-center items-center bg-mesh-black rounded-full ml-[10px] select-none cursor-pointer'>
-                            <p className='text-[0.9rem] leading-[0.9rem] tracking-tight TrapM mt-[4px] text-white'>Sign In</p>
-                        </div>
-                    </Link>
+                    {
+                        userAuthentication.token !== null ?
+                            (
+                                <>
+                                    {/* Notofication */}
+                                    <Link to='/dashboard/notification'>
+                                        <div className='w-[40px] h-[40px] bg-[#f0f0f0] text-[#272727] hover:bg-[#272727] hover:text-[#f0f0f0] rounded-full flex justify-center items-center ml-[10px] cursor-pointer '>
+                                            <IoIosNotifications className='text-[27px]' />
+                                        </div>
+                                    </Link>
 
-                    {/* Sign Up BTN ----------------------------------------------------------------------------- */}
-                    <Link to='/sign-up'>
-                        <div className='h-[40px] w-fit px-[20px] flex justify-center items-center bg-regular-white rounded-full ml-[4px] select-none cursor-pointer max-md:hidden'>
-                            <p className='text-[0.9rem] leading-[0.9rem] tracking-tight TrapM mt-[4px] text-mesh-black'>Sign Up</p>
-                        </div>
-                    </Link>
+                                    {/* Profile  */}
+                                    <div className='relative' >
+                                        <div onClick={() => SetProfileStatusActivate((current) => !current)} className='w-[40px] h-[40px] bg-[#f0f0f0] rounded-full flex justify-center items-center ml-[10px] cursor-pointer overflow-hidden'>
+                                            {userAuthentication.profileImg == '' ?
+                                                (
+                                                    <>
+                                                        <FaUser className='text-[20px]' />
+                                                    </>
+                                                )
+                                                :
+                                                (
+                                                    <>
+                                                        <img className='w-full h-full object-cover' src={userAuthentication.profileImg} alt="" />
+                                                    </>
+                                                )
+                                            }
+                                            <img src="" alt="" />
+                                        </div>
+
+                                        {
+                                            ProfileStatusActivate == true && <UserNavigationPannel />
+                                        }
+
+                                    </div>
+
+
+
+
+                                </>
+                            )
+                            :
+                            (
+                                <>
+                                    {/* Sign In BTN  ----------------------------------------------------------------------------*/}
+                                    <Link to='/sign-in'>
+                                        <div className='h-[40px] w-fit px-[20px] flex justify-center items-center bg-mesh-black rounded-full ml-[10px] select-none cursor-pointer'>
+                                            <p className='text-[0.9rem] leading-[0.9rem] tracking-tight TrapM mt-[4px] text-white'>Sign In</p>
+                                        </div>
+                                    </Link>
+
+                                    {/* Sign Up BTN ----------------------------------------------------------------------------- */}
+                                    <Link to='/sign-up'>
+                                        <div className='h-[40px] w-fit px-[20px] flex justify-center items-center bg-regular-white rounded-full ml-[4px] select-none cursor-pointer max-md:hidden'>
+                                            <p className='text-[0.9rem] leading-[0.9rem] tracking-tight TrapM mt-[4px] text-mesh-black'>Sign Up</p>
+                                        </div>
+                                    </Link>
+
+                                </>
+                            )
+                    }
+
+
                 </div>
 
             </div>
 
-            <Outlet/>
+            <Outlet />
         </>
     )
 }

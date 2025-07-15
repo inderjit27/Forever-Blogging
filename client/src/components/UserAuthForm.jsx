@@ -3,17 +3,22 @@ import { FiUser } from "react-icons/fi";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsKey } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from 'react-router-dom'
-import { useRef } from "react";
+import { Link, useNavigate, useNavigation } from 'react-router-dom'
+import { useContext, useEffect, useRef } from "react";
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import { useState } from "react";
-import {storeDataInSession} from '../functions/Session'
+import { storeDataInSession } from '../functions/Session'
+import { AppContext } from "../../AppContext";
 
 const UserAuthForm = ({ type }) => {
 
+    const { userAuthentication, SetUserAuthentication } = useContext(AppContext)
+    const GO = useNavigate()
     const [loadingBTNstatus, SetloadingBTNstatus] = useState(false)
     const userAuthForm = useRef()
+
+    // #FUNCTIONS ----------------------------------------------------------------------
 
     const SubmitSignUpFormHandler = async (e) => {
         e.preventDefault();
@@ -43,8 +48,6 @@ const UserAuthForm = ({ type }) => {
         }
     }
 
-
-
     const SubmitSignINFormHandler = async (e) => {
         e.preventDefault();
 
@@ -67,7 +70,7 @@ const UserAuthForm = ({ type }) => {
             else {
                 SetloadingBTNstatus(false)
                 storeDataInSession("user", JSON.stringify(respSingIp.data.Data))
-                console.log(sessionStorage)
+                SetUserAuthentication(respSingIp.data.Data)
                 toast.success(respSingIp.data.Message)
             }
         } catch (error) {
@@ -77,9 +80,18 @@ const UserAuthForm = ({ type }) => {
     }
 
 
+    // ---------------------------------------------------------------------------------
+
+    useEffect(() => {
+        if (userAuthentication.token !== null) {
+            GO('/');
+        }
+    }, [userAuthentication])
+
 
     return (
         <>
+
             <div className="w-full h-fit flex flex-col">
 
                 <form ref={userAuthForm} className="w-full h-fit flex flex-col justify-center items-center mt-[50px]">
@@ -210,6 +222,7 @@ const UserAuthForm = ({ type }) => {
                 </form>
 
             </div>
+
         </>
     )
 }
