@@ -5,7 +5,7 @@ require('dotenv').config()
 const authRoutes = require('./routes/authRoute.js')
 const cors = require('cors')
 const admin = require("firebase-admin")
-const firebaseServer = require('./firebaseServer.json') 
+const firebaseServer = require('./firebaseServer.js') 
 
 
 const PORT = process.env.PORT
