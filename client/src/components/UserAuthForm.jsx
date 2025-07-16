@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useState } from "react";
 import { storeDataInSession } from '../functions/Session'
 import { AppContext } from "../../AppContext";
+import { authWithGoogle } from "./Firebase"
 
 const UserAuthForm = ({ type }) => {
 
@@ -40,6 +41,8 @@ const UserAuthForm = ({ type }) => {
             }
             else {
                 SetloadingBTNstatus(false)
+                storeDataInSession("user", JSON.stringify(respSingUp.data.Data))
+                SetUserAuthentication(respSingUp.data.Data)
                 toast.success(respSingUp.data.Message)
             }
         } catch (error) {
@@ -76,6 +79,35 @@ const UserAuthForm = ({ type }) => {
         } catch (error) {
             SetloadingBTNstatus(false)
             console.log(error)
+        }
+    }
+
+    const GoogleHandler = async () => {
+
+        try {
+            const user = await authWithGoogle();
+
+            let formData = {
+                access_token: user.accessToken
+            }
+
+            const respSingGp = await axios.post(`${import.meta.env.VITE_BackendURL}/auth/google-auth`, formData, { withCredentials: true })
+
+            if (respSingGp.data.Success == false) {
+                SetloadingBTNstatus(false)
+                toast.error(respSingGp.data.Message)
+            }
+            else {
+                SetloadingBTNstatus(false)
+                storeDataInSession("user", JSON.stringify(respSingGp.data.Data))
+                SetUserAuthentication(respSingGp.data.Data)
+                toast.success(respSingGp.data.Message)
+            }
+
+            // Your logic with `user` here
+        } catch (error) {
+            toast.error("Something went wrong.");
+            console.log(error);
         }
     }
 
@@ -194,7 +226,7 @@ const UserAuthForm = ({ type }) => {
                     <div className="max-md:w-[300px] md:w-[450px] h-fit flex flex-col justify-center items-center">
 
                         {/* Google */}
-                        <div className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[15px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer gap-[10px]">
+                        <div onClick={GoogleHandler} className="w-full h-fit flex justify-center items-center bg-mesh-black text-white px-[20px] py-[15px]  text-[1rem] leading-[1rem] TrapM select-none cursor-pointer gap-[10px]">
                             <FcGoogle className="text-[27px]" /> Continue With Google
                         </div>
 

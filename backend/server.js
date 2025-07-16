@@ -4,9 +4,16 @@ const dbConnection = require('./config/dbConnection.js')
 require('dotenv').config()
 const authRoutes = require('./routes/authRoute.js')
 const cors = require('cors')
+const admin = require("firebase-admin")
+const firebaseServer = require('./firebaseServer.json') 
 
 
 const PORT = process.env.PORT
+
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseServer)
+});
+
 
 const corsOptions = {
   origin: 'http://localhost:5173', // frontend origin (adjust as needed)
@@ -18,6 +25,11 @@ const corsOptions = {
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
+// ✅ FIX: Add this middleware to set relaxed COOP header
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  next();
+});
 
 app.use(express.json())
 
