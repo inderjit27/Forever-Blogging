@@ -6,6 +6,7 @@ const blogModel = new mongoose.Schema({
     blog_id: { type: String, required: true, unique: true },
     title: { type: String, required: true },
     banner: { type: String },
+    banner_public_id: { type: String },
     description: { type: String },
     content: { type: [] },
     tags: { type: [String] },

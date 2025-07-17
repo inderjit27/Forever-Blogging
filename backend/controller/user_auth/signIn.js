@@ -3,12 +3,12 @@ const bcrypt = require('bcrypt')
 require('dotenv').config()
 const jsonwebtoken = require('jsonwebtoken')
 
-const signIn = async(req,res) =>{
+const signIn = async (req, res) => {
 
     const FormatData = (user) => {
-    
-        const user_token = jsonwebtoken.sign({id: user._id}, process.env.SCREAT)
-    
+
+        const user_token = jsonwebtoken.sign({ id: user._id }, process.env.SCREAT)
+
         return ({
             token: user_token,
             userName: user.personal_information.userName,
@@ -21,23 +21,30 @@ const signIn = async(req,res) =>{
 
     try {
 
-        const {email, password} = req.body
+        const { email, password } = req.body
 
-        if(!email || !password){
-            return res.json({Success:false, Message:'Fill All Form Carefully.'})
+        if (!email || !password) {
+            return res.json({ Success: false, Message: 'Fill All Form Carefully.' })
         }
 
-        const checkUser = await user.findOne({"personal_information.email": email})
-        if(!checkUser){
-            return res.json({Success:false, Message:'Email is not exist.'})
+        const checkUser = await user.findOne({ "personal_information.email": email })
+        if (!checkUser) {
+            return res.json({ Success: false, Message: 'Email is not exist.' })
         }
 
-        const checkPassword = await bcrypt.compare(password, checkUser.personal_information.password)
-        if(!checkPassword){
-            return res.json({Success:false, Message:'Wrong Password.'})
+        if (!checkUser.google_auth) {
+            const checkPassword = await bcrypt.compare(password, checkUser.personal_information.password)
+            if (!checkPassword) {
+                return res.json({ Success: false, Message: 'Wrong Password.' })
+            }
+            return res.json({ Success: true, Message: 'Login Successfully !', Data: FormatData(checkUser) })
+        }
+        else {
+            return res.json({ Success: false, Message: 'Account was created using Google, Please Try With Login Google' })
+
         }
 
-        return res.json({Success:true, Message:'Login Successfully !', Data:FormatData(checkUser)})
+
 
     } catch (error) {
         console.log('SignIn Unsuccessfull :-> ' + error)

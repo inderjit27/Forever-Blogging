@@ -5,8 +5,10 @@ require('dotenv').config()
 const authRoutes = require('./routes/authRoute.js')
 const cors = require('cors')
 const admin = require("firebase-admin")
-const firebaseServer = require('./firebaseServer.js') 
-
+const firebaseServer = require('./firebaseServer.js')
+const cloudinaryConnection = require('./config/cloudinaryConnection.js')
+const fileUpload = require('express-fileupload')
+const cloudinaryRoute = require('./routes/cloudinaryRoute.js')
 
 const PORT = process.env.PORT
 
@@ -31,19 +33,29 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}))
+
+
 app.use(express.json())
 
-app.use('/auth',authRoutes)
+
+app.use('/auth', authRoutes)
+app.use('/cloudinary', cloudinaryRoute)
 
 
 
-app.get('/',(req,res)=>{
-    return res.send('🙏 Welcome To Forever Blogging Website')
+app.get('/', (req, res) => {
+  return res.send('🙏 Welcome To Forever Blogging Website')
 })
 
-app.listen(PORT,()=>{
-    console.log(`✅ Server Start on ${PORT} PORT No`)
+app.listen(PORT, () => {
+  console.log(`✅ Server Start on ${PORT} PORT No`)
 })
+
+cloudinaryConnection()
 
 
 
