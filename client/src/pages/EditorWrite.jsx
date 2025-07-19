@@ -7,8 +7,7 @@ import PublishFormComponent from "../components/PublishFormComponent"
 const EditorWrite = () => {
 
     const GO = useNavigate()
-    const { userAuthentication, SetUserAuthentication } = useContext(AppContext)
-    const [EditorStatusChange, SetEditorStatusChange] = useState('editor')
+    const { userAuthentication, SetUserAuthentication, EditorStatusChange, SetEditorStatusChange } = useContext(AppContext)
 
     // # -------------------------[ Functions ]--------------------------------
     
